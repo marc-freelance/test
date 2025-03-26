@@ -1,12 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   FileText, 
   Users, 
-  Briefcase, 
-  BarChart4, 
   Settings, 
   Menu, 
   X,
@@ -19,8 +16,6 @@ const navItems = [
   { name: "Dashboard", path: "/", icon: Home },
   { name: "Invoices", path: "/invoices", icon: FileText },
   { name: "Clients", path: "/clients", icon: Users },
-  { name: "Projects", path: "/projects", icon: Briefcase },
-  { name: "Reports", path: "/reports", icon: BarChart4 },
   { name: "Settings", path: "/settings", icon: Settings },
 ];
 

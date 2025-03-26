@@ -29,6 +29,12 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { NewInvoiceForm } from "@/components/invoices/NewInvoiceForm";
 
 // Mock data
 const invoices = [
@@ -98,6 +104,7 @@ const Invoices = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Filter invoices based on search term and status
   const filteredInvoices = invoices.filter(invoice => {
@@ -147,10 +154,17 @@ const Invoices = () => {
             <p className="text-muted-foreground animate-fade-in delay-100">Manage and track all your invoices</p>
           </div>
           
-          <Button className="animate-fade-in sm:self-end">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Invoice
-          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="animate-fade-in sm:self-end">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                New Invoice
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <NewInvoiceForm onClose={() => setIsDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
         
         <div className="bg-white rounded-xl shadow-sm border border-border/50 overflow-hidden animate-fade-up">
