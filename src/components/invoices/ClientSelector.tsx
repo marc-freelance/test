@@ -59,12 +59,15 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
     setOpen(false);
   };
 
-  const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  // Ensure we always have a valid array for filtering
+  const filteredClients = inputValue
+    ? clients.filter(client => 
+        client.name.toLowerCase().includes(inputValue.toLowerCase())
+      )
+    : clients;
 
   const existingClientNames = clients.map(client => client.name.toLowerCase());
-  const isExactMatch = existingClientNames.includes(inputValue.toLowerCase());
+  const isExactMatch = inputValue ? existingClientNames.includes(inputValue.toLowerCase()) : false;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
