@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -37,7 +36,6 @@ const baseFormSchema = z.object({
   date: z.date(),
   dueDate: z.date(),
   status: z.enum(["draft", "due", "paid", "overdue"]),
-  description: z.string().optional(),
   lineItems: lineItemsSchema.min(1, { message: "At least one line item is required" }),
 });
 
@@ -60,7 +58,6 @@ export function NewInvoiceForm({ onClose }: NewInvoiceFormProps) {
       date: new Date(),
       dueDate: new Date(new Date().setDate(new Date().getDate() + 14)),
       status: "draft",
-      description: "",
       lineItems: [
         {
           description: "",
@@ -284,24 +281,6 @@ export function NewInvoiceForm({ onClose }: NewInvoiceFormProps) {
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description (Optional)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter invoice details or notes"
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <InvoiceLineItems
             control={form.control}
