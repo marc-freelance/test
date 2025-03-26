@@ -33,7 +33,8 @@ interface ClientSelectorProps {
 export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProps) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [clients] = useState(mockClients); // Always use mockClients, no need to reinitialize
+  // Use mockClients directly to avoid potential issues with initialization
+  const clients = mockClients;
 
   // Update the input value when the value prop changes
   useEffect(() => {
@@ -50,8 +51,10 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
   }, [value, clients]);
 
   const handleSelectClient = (currentValue: string) => {
-    onChange(currentValue);
-    setOpen(false);
+    if (currentValue) {
+      onChange(currentValue);
+      setOpen(false);
+    }
   };
 
   const handleAddNew = () => {
@@ -91,8 +94,8 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
         <Command>
           <CommandInput 
             placeholder="Search client..."
-            value={inputValue}
-            onValueChange={setInputValue}
+            value={inputValue || ""}
+            onValueChange={(val) => setInputValue(val || "")}
           />
           <CommandEmpty>
             {inputValue && !isExactMatch ? (
@@ -113,21 +116,23 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
             )}
           </CommandEmpty>
           <CommandGroup>
-            {filteredClients.map((client) => (
-              <CommandItem
-                key={client.id}
-                value={client.name}
-                onSelect={handleSelectClient}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === client.name ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {client.name}
-              </CommandItem>
-            ))}
+            {filteredClients && filteredClients.length > 0 ? (
+              filteredClients.map((client) => (
+                <CommandItem
+                  key={client.id}
+                  value={client.name}
+                  onSelect={handleSelectClient}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === client.name ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {client.name}
+                </CommandItem>
+              ))
+            ) : null}
           </CommandGroup>
         </Command>
       </PopoverContent>
