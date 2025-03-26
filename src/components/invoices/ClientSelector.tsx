@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, Building, UserRound } from "lucide-react";
 import { 
   Command,
   CommandEmpty,
@@ -18,10 +18,38 @@ import { cn } from "@/lib/utils";
 
 // Mock client data - in a real app, this would come from an API or context
 const mockClients = [
-  { id: "1", name: "Acme Corp", address: "123 Main St, New York, NY 10001" },
-  { id: "2", name: "Globex Industries", address: "456 Tech Blvd, San Francisco, CA 94107" },
-  { id: "3", name: "TechStart Inc", address: "789 Innovation Way, Boston, MA 02210" },
-  { id: "4", name: "Design Partners", address: "101 Creative Ave, Austin, TX 78701" },
+  { 
+    id: "1", 
+    name: "Acme Corp", 
+    address: "123 Main St, New York, NY 10001",
+    billingAddress: "123 Main St, New York, NY 10001",
+    isBusiness: true,
+    vat: "US123456789"
+  },
+  { 
+    id: "2", 
+    name: "Globex Industries", 
+    address: "456 Tech Blvd, San Francisco, CA 94107",
+    billingAddress: "456 Tech Blvd, San Francisco, CA 94107",
+    isBusiness: true,
+    vat: "EU987654321"
+  },
+  { 
+    id: "3", 
+    name: "TechStart Inc", 
+    address: "789 Innovation Way, Boston, MA 02210",
+    billingAddress: "PO Box 1234, Boston, MA 02211",
+    isBusiness: true,
+    vat: "TX12345ABC"
+  },
+  { 
+    id: "4", 
+    name: "Sarah Williams", 
+    address: "101 Creative Ave, Austin, TX 78701",
+    billingAddress: "101 Creative Ave, Austin, TX 78701",
+    isBusiness: false,
+    vat: ""
+  },
 ];
 
 interface ClientSelectorProps {
@@ -120,13 +148,23 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
                 value={client.name}
                 onSelect={handleSelectClient}
               >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === client.name ? "opacity-100" : "opacity-0"
+                <div className="flex items-center">
+                  {client.isBusiness ? (
+                    <Building className="mr-2 h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <UserRound className="mr-2 h-4 w-4 text-muted-foreground" />
                   )}
-                />
-                {client.name}
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === client.name ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {client.name}
+                  {client.isBusiness && client.vat && (
+                    <span className="ml-2 text-xs text-muted-foreground">VAT: {client.vat}</span>
+                  )}
+                </div>
               </CommandItem>
             ))}
           </CommandGroup>

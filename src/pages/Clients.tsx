@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { 
+  Building,
   Mail, 
   MoreHorizontal, 
   Phone, 
@@ -30,6 +31,9 @@ const clients = [
     email: "john@acmecorp.com",
     phone: "+1 (555) 123-4567",
     address: "123 Business Ave, Suite 100, San Francisco, CA 94107",
+    billingAddress: "123 Business Ave, Suite 100, San Francisco, CA 94107",
+    isBusiness: true,
+    vat: "US123456789",
     invoices: 5,
     totalBilled: 12500,
   },
@@ -40,6 +44,9 @@ const clients = [
     email: "jane@globex.com",
     phone: "+1 (555) 234-5678",
     address: "456 Corporate Blvd, New York, NY 10001",
+    billingAddress: "456 Corporate Blvd, New York, NY 10001",
+    isBusiness: true,
+    vat: "EU987654321",
     invoices: 3,
     totalBilled: 8400,
   },
@@ -50,16 +57,22 @@ const clients = [
     email: "mike@techstart.com",
     phone: "+1 (555) 345-6789",
     address: "789 Innovation Dr, Austin, TX 78701",
+    billingAddress: "PO Box 1234, Austin, TX 78702",
+    isBusiness: true,
+    vat: "TX12345ABC",
     invoices: 7,
     totalBilled: 15600,
   },
   {
     id: "client-4",
-    name: "Design Partners",
+    name: "Sarah Williams",
     contactName: "Sarah Williams",
     email: "sarah@designpartners.com",
-    phone: "+1 (555) 456-7890",
+    phone: "",
     address: "321 Creative Way, Portland, OR 97204",
+    billingAddress: "321 Creative Way, Portland, OR 97204",
+    isBusiness: false,
+    vat: "",
     invoices: 4,
     totalBilled: 9200,
   },
@@ -113,11 +126,20 @@ const Clients = () => {
                   <div className="flex justify-between items-start">
                     <div className="flex items-center space-x-3">
                       <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-                        <UserRound className="h-6 w-6 text-primary" />
+                        {client.isBusiness ? (
+                          <Building className="h-6 w-6 text-primary" />
+                        ) : (
+                          <UserRound className="h-6 w-6 text-primary" />
+                        )}
                       </div>
                       <div>
                         <h3 className="font-medium">{client.name}</h3>
-                        <p className="text-sm text-muted-foreground">{client.contactName}</p>
+                        {client.contactName !== client.name && (
+                          <p className="text-sm text-muted-foreground">{client.contactName}</p>
+                        )}
+                        {client.isBusiness && client.vat && (
+                          <p className="text-xs text-muted-foreground">VAT: {client.vat}</p>
+                        )}
                       </div>
                     </div>
                     
@@ -146,10 +168,12 @@ const Clients = () => {
                       <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
                       <span className="truncate">{client.email}</span>
                     </div>
-                    <div className="flex items-center text-sm">
-                      <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>{client.phone}</span>
-                    </div>
+                    {client.phone && (
+                      <div className="flex items-center text-sm">
+                        <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <span>{client.phone}</span>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-border/50 flex justify-between text-sm">

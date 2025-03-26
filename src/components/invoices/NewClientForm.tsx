@@ -15,16 +15,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const clientFormSchema = z.object({
   name: z.string().min(2, { message: "Client name is required" }),
   email: z.string().email({ message: "Please enter a valid email" }).optional().or(z.literal("")),
+  billingAddress: z.string().min(1, { message: "Billing address is required" }),
   address: z.string().min(1, { message: "Address is required" }),
   city: z.string().min(1, { message: "City is required" }),
   state: z.string().min(1, { message: "State is required" }),
   zipCode: z.string().min(1, { message: "Zip code is required" }),
   country: z.string().min(1, { message: "Country is required" }),
   phone: z.string().optional().or(z.literal("")),
+  isBusiness: z.boolean().default(false),
+  vat: z.string().optional().or(z.literal("")),
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
@@ -43,14 +47,20 @@ export function NewClientForm({ initialName, onSave, onCancel }: NewClientFormPr
     defaultValues: {
       name: initialName,
       email: "",
+      billingAddress: "",
       address: "",
       city: "",
       state: "",
       zipCode: "",
       country: "United States",
       phone: "",
+      isBusiness: false,
+      vat: "",
     },
   });
+
+  // Watch if the client is a business to conditionally show VAT field
+  const isBusiness = form.watch("isBusiness");
 
   function onSubmit(data: ClientFormValues) {
     setIsSubmitting(true);
@@ -122,10 +132,58 @@ export function NewClientForm({ initialName, onSave, onCancel }: NewClientFormPr
 
           <FormField
             control={form.control}
+            name="isBusiness"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Business Client</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {isBusiness && (
+            <FormField
+              control={form.control}
+              name="vat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>VAT Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="VAT number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          <FormField
+            control={form.control}
+            name="billingAddress"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel>Billing Address*</FormLabel>
+                <FormControl>
+                  <Input placeholder="Billing address" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="address"
             render={({ field }) => (
               <FormItem className="md:col-span-2">
-                <FormLabel>Address*</FormLabel>
+                <FormLabel>Physical Address*</FormLabel>
                 <FormControl>
                   <Input placeholder="Street address" {...field} />
                 </FormControl>
