@@ -55,19 +55,24 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
   };
 
   const handleAddNew = () => {
-    onAddNew(inputValue);
-    setOpen(false);
+    if (inputValue && inputValue.trim() !== "") {
+      onAddNew(inputValue);
+      setOpen(false);
+    }
   };
 
   // Ensure we always have a valid array for filtering
-  const filteredClients = inputValue
+  const filteredClients = inputValue 
     ? clients.filter(client => 
         client.name.toLowerCase().includes(inputValue.toLowerCase())
       )
     : clients;
 
+  // Ensure we're checking against a valid string
   const existingClientNames = clients.map(client => client.name.toLowerCase());
-  const isExactMatch = inputValue ? existingClientNames.includes(inputValue.toLowerCase()) : false;
+  const isExactMatch = inputValue && inputValue.trim() !== "" 
+    ? existingClientNames.includes(inputValue.toLowerCase()) 
+    : false;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -87,7 +92,7 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
           <CommandInput 
             placeholder="Search client..."
             value={inputValue}
-            onValueChange={setInputValue}
+            onValueChange={(val) => setInputValue(val || "")}
           />
           <CommandEmpty>
             {inputValue && !isExactMatch ? (
@@ -108,7 +113,7 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
             )}
           </CommandEmpty>
           <CommandGroup>
-            {filteredClients.map((client) => (
+            {filteredClients && filteredClients.length > 0 && filteredClients.map((client) => (
               <CommandItem
                 key={client.id}
                 value={client.name}
