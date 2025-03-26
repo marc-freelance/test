@@ -62,15 +62,20 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
   };
 
   // Ensure we always have a valid array for filtering
-  const filteredClients = inputValue 
-    ? clients.filter(client => 
-        client.name.toLowerCase().includes(inputValue.toLowerCase())
-      )
-    : clients;
+  const filteredClients = clients && clients.length > 0
+    ? (inputValue 
+        ? clients.filter(client => 
+            client.name.toLowerCase().includes(inputValue.toLowerCase())
+          )
+        : [...clients])
+    : [];
 
   // Ensure we're checking against a valid string
-  const existingClientNames = clients.map(client => client.name.toLowerCase());
-  const isExactMatch = inputValue && inputValue.trim() !== "" 
+  const existingClientNames = clients && clients.length > 0 
+    ? clients.map(client => client.name.toLowerCase()) 
+    : [];
+    
+  const isExactMatch = inputValue && inputValue.trim() !== "" && existingClientNames.length > 0
     ? existingClientNames.includes(inputValue.toLowerCase()) 
     : false;
 
@@ -91,7 +96,7 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
         <Command>
           <CommandInput 
             placeholder="Search client..."
-            value={inputValue}
+            value={inputValue || ""}
             onValueChange={(val) => setInputValue(val || "")}
           />
           <CommandEmpty>
@@ -113,21 +118,23 @@ export function ClientSelector({ value, onChange, onAddNew }: ClientSelectorProp
             )}
           </CommandEmpty>
           <CommandGroup>
-            {filteredClients && filteredClients.length > 0 && filteredClients.map((client) => (
-              <CommandItem
-                key={client.id}
-                value={client.name}
-                onSelect={handleSelectClient}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === client.name ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {client.name}
-              </CommandItem>
-            ))}
+            {filteredClients.length > 0 ? (
+              filteredClients.map((client) => (
+                <CommandItem
+                  key={client.id}
+                  value={client.name}
+                  onSelect={handleSelectClient}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === client.name ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {client.name}
+                </CommandItem>
+              ))
+            ) : null}
           </CommandGroup>
         </Command>
       </PopoverContent>
